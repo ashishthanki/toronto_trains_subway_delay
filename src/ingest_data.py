@@ -1,5 +1,6 @@
 "File used to ingest raw Toronto train data from URL."
 import logging
+import re
 from pathlib import Path
 
 import requests
@@ -17,6 +18,7 @@ output_path = Path().absolute() / "data/raw/"
 def get_data(
     output_folder: Path,
     base_url: str = "https://ckan0.cf.opendata.inter.prod-toronto.ca",
+    year_limit: int = 2020,
 ) -> None:
     """_summary_
 
@@ -40,9 +42,15 @@ def get_data(
         # To get metadata for non datastore_active resources:
         if resource["datastore_active"]:
             continue
-
         file_name = resource["name"]
         data_url = resource["url"]
+
+        # only store results from 2019 onwards
+        match = re.match(".*([1-3][0-9]{3})", file_name)
+        if match is not None:
+            year = int(match.group(1))
+            if year < year_limit:
+                continue
 
         # Get raw data
         data = requests.get(data_url)
@@ -56,4 +64,5 @@ def get_data(
             output.write(data.content)
 
 
-get_data(output_path)
+if __name__ == "__main__":
+    get_data(output_path)
