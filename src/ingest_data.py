@@ -10,7 +10,7 @@ logging.basicConfig(
     format="%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 output_path = Path().absolute() / "data/raw/"
 
@@ -20,15 +20,17 @@ def get_data(
     base_url: str = "https://ckan0.cf.opendata.inter.prod-toronto.ca",
     year_limit: int = 2020,
 ) -> None:
-    """_summary_
+    """Downloads Toronto data based on year limit.
 
     Toronto Open Data is stored in a CKAN instance. It's APIs are documented here:
     https://docs.ckan.org/en/latest/api/
 
     Args:
         output_folder (Path): Where to save the data.
-        base_url (_type_, optional): To hit our API, you'll be making requests to:
+        base_url (str, optional): To hit our API, you'll be making requests to:
             Defaults to "https://ckan0.cf.opendata.inter.prod-toronto.ca".
+        year_limit (int, optional): Year to limit data download.
+            Defaults to 2020.
     """
     # Datasets are called "packages". Each package can contain many "resources"
     # To retrieve the metadata for this package and its resources,
